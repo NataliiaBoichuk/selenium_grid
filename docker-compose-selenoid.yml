@@ -1,0 +1,25 @@
+version: '3'
+networks:
+  selenoid_network:
+    name: selenoid_network
+    driver: bridge
+services:
+  selenoid:
+    image: "aerokube/selenoid:latest-release"
+    networks:
+      - selenoid_network
+    container_name: selenoid
+    ports:
+      - "4444:4444"
+    volumes:
+      - "/c/users/user/desktop/selenium_grid:/etc/selenoid"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command: [ "-conf","/etc/selenoid/browsers.json","-container-network", "selenoid_network" ]
+  selenoid-ui:
+    image: "aerokube/selenoid-ui:latest-release"
+    networks:
+      - selenoid_network
+    container_name: selenoid-ui
+    ports:
+      - "8080:8080"
+    command: [ "--selenoid-uri","http://selenoid:4444" ]
